@@ -1,10 +1,17 @@
+import java.io.IOException;
+
 public class Main {
-    public static void main(String[] args) {
-        ListNode head = new ListNode(new int[]{1, 2, 3, 4, 5});
-//        var x = new ListNode(null);
 
-        var rv = new LinkedListRemover().removeNthFromEnd(head, 2);
+    public static void main(String[] args) throws IOException {
 
-        System.out.println(rv);
+        var icoDrops = new IcoDrops();
+        icoDrops.login();
+        var shortPortfolio = icoDrops.getShortPortfolio();
+
+        var balances = shortPortfolio.getPortfolioGroups().stream()
+                .map(portfolioGroup -> portfolioGroup.getPortfolioTotal().getTotalCap().getUsd()).toList();
+
+        System.out.println(shortPortfolio.getUsername() + ": " + String.join(", ", balances));
     }
+
 }
