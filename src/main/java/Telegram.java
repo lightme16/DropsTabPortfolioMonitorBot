@@ -23,45 +23,46 @@ public class Telegram {
     }
 
     public void start() {
-        // Register for updates
         bot.setUpdatesListener(updates -> {
-            // ... process updates
             updates.forEach(update -> {
 
                 var username = update.message().from().username();
-                if (username.equals(user)) {
-                    System.out.println("Message from user" + username + ": " + update.message().text());
-
-                    long chatId = update.message().chat().id();
-
-                    String balance;
-                    try {
-                        balance = getBalance();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return;
-                    }
-
-                    SendMessage request = new SendMessage(chatId, "Balance: " + balance);
-                    bot.execute(request, new Callback() {
-                        @Override
-                        public void onResponse(BaseRequest request, BaseResponse response) {
-                            
-                            System.out.println("Message sent");
-                            
-                        }
-                        @Override
-                        public void onFailure(BaseRequest request, IOException e) {
-                            System.out.println("Message failed");
-                        }
-                    });
-                }
-                else {
+                if (!username.equals(user)) {
                     System.out.println("Message from unknown user" + username + ": " + update.message().text());
+                    return;
                 }
+
+                System.out.println("Message from user" + username + ": " + update.message().text());
+
+                long chatId = update.message().chat().id();
+
+                String balance;
+                try {
+                    balance = getBalance();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return;
+                }
+
+                sendBalance(chatId, balance);
             });
             // return id of last processed update or confirm them all
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
+        });
+    }
+
+    private void sendBalance(long chatId, String balance) {
+        SendMessage request = new SendMessage(chatId, "Balance: " + balance);
+        bot.execute(request, new Callback() {
+            @Override
+            public void onResponse(BaseRequest request, BaseResponse response) {
+                System.out.println("Message sent");
+            }
+
+            @Override
+            public void onFailure(BaseRequest request, IOException e) {
+                System.out.println("Message failed");
+            }
         });
     }
 
@@ -76,5 +77,3 @@ public class Telegram {
         return String.join(", ", balances);
     }
 }
-
-
