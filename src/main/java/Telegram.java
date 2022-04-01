@@ -7,52 +7,76 @@ import com.pengrad.telegrambot.response.BaseResponse;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Telegram {
 
+    private static final int PERIOD = 5000;
     private final TelegramBot bot;
     private final IcoDrops icoDrops;
-    private final String user;
+    private final String targetUser;
+    private Timer timer;
+
+    public void start() {
+        bot.setUpdatesListener(updates -> {
+            for (var update : updates) {
+                if (update.message() == null) {
+                    continue;
+                }
+                var username = update.message().from().username();
+                if (!username.equals(targetUser)) {
+                    System.out.println("Message from unknown user" + username + ": " + update.message().text());
+                    continue;
+                }
+                var chatId = update.message().chat().id();
+                String text = update.message().text();
+                if (text.equals("/start")) {
+                    sendMessageToChat("Hello!\n" +
+                            "I'm icoDrops bot.\n" +
+                            "I can tell you how many drops you have left.\n" +
+                            "You can also check your drops in real time.\n" +
+                            "To get started, send me your ETH address.", chatId);
+                } else if (text.startsWith("0x")) {
+                    sendMessageToChat("Your address is " + text + ".\n" +
+                            "Now, I'll start checking your drops in real time.\n" +
+                            "You can stop it by sending /stop command.", chatId);
+                    timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            try {
+                                String balance = getBalance();
+                                sendMessageToChat("Balance: " + balance, chatId);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, 0, PERIOD);
+                } else if (text.equals("/stop")) {
+                    timer.cancel();
+                    sendMessageToChat("Drops checking stopped.", chatId);
+                } else {
+                    sendMessageToChat("Unknown command.\n" +
+                            "/start - start bot\n" +
+                            "/stop - stop bot\n" +
+                            "0x... - set your ETH address", chatId);
+                }
+            }
+            return UpdatesListener.CONFIRMED_UPDATES_ALL;
+        });
+    }
 
     public Telegram() throws IOException {
         String bot_token = System.getenv("BOT_TOKEN");
         bot = new TelegramBot(bot_token);
         icoDrops = new IcoDrops();
         icoDrops.login();
-        user = System.getenv("USER");
+        targetUser = System.getenv("USER");
     }
 
-    public void start() {
-        bot.setUpdatesListener(updates -> {
-            updates.forEach(update -> {
-
-                var username = update.message().from().username();
-                if (!username.equals(user)) {
-                    System.out.println("Message from unknown user" + username + ": " + update.message().text());
-                    return;
-                }
-
-                System.out.println("Message from user" + username + ": " + update.message().text());
-
-                long chatId = update.message().chat().id();
-
-                String balance;
-                try {
-                    balance = getBalance();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return;
-                }
-
-                sendBalance(chatId, balance);
-            });
-            // return id of last processed update or confirm them all
-            return UpdatesListener.CONFIRMED_UPDATES_ALL;
-        });
-    }
-
-    private void sendBalance(long chatId, String balance) {
-        SendMessage request = new SendMessage(chatId, "Balance: " + balance);
+    private void sendMessageToChat(String text, long chatId) {
+        SendMessage request = new SendMessage(chatId, text);
         bot.execute(request, new Callback() {
             @Override
             public void onResponse(BaseRequest request, BaseResponse response) {
