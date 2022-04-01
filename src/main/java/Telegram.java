@@ -14,6 +14,7 @@ import java.util.TimerTask;
 public class Telegram {
 
     private static final int PERIOD = 5000;
+    private static final double CHANGE_THRESHOLD = 0.1;
     private final TelegramBot bot;
     private final IcoDrops icoDrops;
     private final String targetUser;
@@ -75,16 +76,14 @@ public class Telegram {
     }
 
     private void sendIfBalanceChanged(int balance, Long chatId) {
-        var threshold = 0.1;
-        Boolean rv = isChangedSignificant(balance, last_balance, threshold);
-        if (rv) {
+        if (isChangedSignificant(balance, last_balance)) {
             sendMessageToChat("Balance changed: " + balance, chatId);
             last_balance = balance;
         }
     }
 
-    private Boolean isChangedSignificant(int curr_balance, int last_balance, double threshold) {
-        return Math.abs(curr_balance - last_balance) > threshold * last_balance;
+    private Boolean isChangedSignificant(int curr_balance, int last_balance) {
+        return Math.abs(curr_balance - last_balance) > Telegram.CHANGE_THRESHOLD * last_balance;
     }
 
     public Telegram() throws IOException {
