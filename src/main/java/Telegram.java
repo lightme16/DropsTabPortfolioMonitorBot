@@ -7,6 +7,7 @@ import com.pengrad.telegrambot.response.BaseResponse;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -17,6 +18,7 @@ public class Telegram {
     private final IcoDrops icoDrops;
     private final String targetUser;
     private Timer timer;
+    private int last_balance;
 
     public void start() {
         bot.setUpdatesListener(updates -> {
@@ -31,14 +33,18 @@ public class Telegram {
                 }
                 var chatId = update.message().chat().id();
                 String text = update.message().text();
+                String account_prefix = "/account";
                 if (text.equals("/start")) {
-                    sendMessageToChat("Hello!\n" +
-                            "I'm icoDrops bot.\n" +
-                            "I can tell you how many drops you have left.\n" +
-                            "You can also check your drops in real time.\n" +
-                            "To get started, send me your ETH address.", chatId);
-                } else if (text.startsWith("0x")) {
-                    sendMessageToChat("Your address is " + text + ".\n" +
+                    sendMessageToChat("""
+                            Hello!
+                            I'm icoDrops bot.
+                            I can tell you how many drops you have left.
+                            You can also check your drops in real time.
+                            To get started, send me your ETH address.""", chatId);
+                } else if (text.startsWith("/account")) {
+                    var account = text.substring(account_prefix.length()).strip();
+
+                    sendMessageToChat("Your account is " + text + ".\n" +
                             "Now, I'll start checking your drops in real time.\n" +
                             "You can stop it by sending /stop command.", chatId);
                     timer = new Timer();
@@ -46,8 +52,8 @@ public class Telegram {
                         @Override
                         public void run() {
                             try {
-                                String balance = getBalance();
-                                sendMessageToChat("Balance: " + balance, chatId);
+                                var balance = getBalance(account);
+                                sendIfBalanceChanged(balance, chatId);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -57,14 +63,28 @@ public class Telegram {
                     timer.cancel();
                     sendMessageToChat("Drops checking stopped.", chatId);
                 } else {
-                    sendMessageToChat("Unknown command.\n" +
-                            "/start - start bot\n" +
-                            "/stop - stop bot\n" +
-                            "0x... - set your ETH address", chatId);
+                    sendMessageToChat("""
+                            Unknown command.
+                            /start - start bot
+                            /stop - stop bot
+                            0x... - set your ETH address""", chatId);
                 }
             }
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
         });
+    }
+
+    private void sendIfBalanceChanged(int balance, Long chatId) {
+        var threshold = 0.1;
+        Boolean rv = isChangedSignificant(balance, last_balance, threshold);
+        if (rv) {
+            sendMessageToChat("Balance changed: " + balance, chatId);
+            last_balance = balance;
+        }
+    }
+
+    private Boolean isChangedSignificant(int curr_balance, int last_balance, double threshold) {
+        return Math.abs(curr_balance - last_balance) > threshold * last_balance;
     }
 
     public Telegram() throws IOException {
@@ -90,14 +110,29 @@ public class Telegram {
         });
     }
 
-    @NotNull
-    private String getBalance() throws IOException {
+    private int getBalance(String account) throws IOException {
         ShortPortfolio shortPortfolio;
         shortPortfolio = icoDrops.getShortPortfolio();
 
-        var balances = shortPortfolio.getPortfolioGroups().stream()
-                .map(portfolioGroup -> portfolioGroup.getPortfolioTotal().getTotalCap().getUsd()).toList();
+        var balance = shortPortfolio.getPortfolioGroups()
+                .stream()
+                .filter(portfolioGroup -> portfolioGroup.getName().equals(account))
+                .map(portfolioGroup -> portfolioGroup.getPortfolioTotal().getTotalCap().getUsd())
+                .findFirst();
+        return parseInt(balance);
 
-        return String.join(", ", balances);
+    }
+
+    private int parseInt(@NotNull Optional<String> text) {
+        int default_value = 0;
+        if (text.isPresent()) {
+            try {
+                return (int) Float.parseFloat(text.get());
+            } catch (NumberFormatException e) {
+                return default_value;
+            }
+        } else {
+            return default_value;
+        }
     }
 }
