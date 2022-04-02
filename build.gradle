@@ -1,6 +1,9 @@
 plugins {
     id 'org.jetbrains.intellij' version '1.5.1'
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'application'
+
 }
 
 group 'org.example'
@@ -9,6 +12,8 @@ version '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
 }
+
+mainClassName = 'Main'
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
