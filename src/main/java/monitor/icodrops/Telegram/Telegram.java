@@ -1,3 +1,6 @@
+package monitor.icodrops.Telegram;
+
+import monitor.icodrops.Infra.Infra.IcoDrops;
 import com.pengrad.telegrambot.Callback;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;

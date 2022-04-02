@@ -1,9 +1,11 @@
+package monitor.icodrops.Models;
+
 import javax.annotation.processing.Generated;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 @Generated("jsonschema2pojo")
-public class Change24hPercent {
+public class Change {
 
     @SerializedName("USD")
     @Expose

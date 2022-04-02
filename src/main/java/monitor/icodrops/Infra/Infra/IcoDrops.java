@@ -1,4 +1,7 @@
+package monitor.icodrops.Infra.Infra;
+
 import com.google.gson.Gson;
+import monitor.icodrops.Models.ShortPortfolio;
 import okhttp3.*;
 
 import java.io.IOException;

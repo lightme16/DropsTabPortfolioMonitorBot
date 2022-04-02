@@ -6,14 +6,14 @@ plugins {
 
 }
 
-group 'org.example'
+group 'monitor.icodrops'
+mainClassName = "monitor.icodrops.Main"
 version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
 }
 
-mainClassName = 'Main'
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'

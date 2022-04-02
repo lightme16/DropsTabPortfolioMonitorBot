@@ -1,3 +1,7 @@
+package monitor.icodrops;
+
+import monitor.icodrops.Telegram.Telegram;
+
 import java.io.IOException;
 
 public class Main {

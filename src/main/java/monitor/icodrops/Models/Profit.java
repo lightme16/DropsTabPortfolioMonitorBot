@@ -1,52 +1,54 @@
+package monitor.icodrops.Models;
+
 import javax.annotation.processing.Generated;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 @Generated("jsonschema2pojo")
-public class TotalRealizedProfit {
+public class Profit {
 
     @SerializedName("USD")
     @Expose
-    private Double usd;
+    private String usd;
     @SerializedName("BTC")
     @Expose
-    private Double btc;
+    private String btc;
     @SerializedName("ETH")
     @Expose
-    private Double eth;
+    private String eth;
     @SerializedName("BNB")
     @Expose
-    private Double bnb;
+    private String bnb;
 
-    public Double getUsd() {
+    public String getUsd() {
         return usd;
     }
 
-    public void setUsd(Double usd) {
+    public void setUsd(String usd) {
         this.usd = usd;
     }
 
-    public Double getBtc() {
+    public String getBtc() {
         return btc;
     }
 
-    public void setBtc(Double btc) {
+    public void setBtc(String btc) {
         this.btc = btc;
     }
 
-    public Double getEth() {
+    public String getEth() {
         return eth;
     }
 
-    public void setEth(Double eth) {
+    public void setEth(String eth) {
         this.eth = eth;
     }
 
-    public Double getBnb() {
+    public String getBnb() {
         return bnb;
     }
 
-    public void setBnb(Double bnb) {
+    public void setBnb(String bnb) {
         this.bnb = bnb;
     }
 
