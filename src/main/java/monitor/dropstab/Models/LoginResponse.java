@@ -1,4 +1,4 @@
-package monitor.icodrops.Models;
+package monitor.dropstab.Models;
 
 import javax.annotation.processing.Generated;
 

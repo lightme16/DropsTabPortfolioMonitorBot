@@ -1,4 +1,4 @@
-package monitor.icodrops.Models;
+package monitor.dropstab.Models;
 
 import javax.annotation.processing.Generated;
 import com.google.gson.annotations.Expose;

@@ -1,10 +1,9 @@
-package monitor.icodrops.Models;
+package monitor.dropstab.Models;
 
 import java.util.List;
 import javax.annotation.processing.Generated;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import monitor.icodrops.Models.PortfolioGroup;
 
 @Generated("jsonschema2pojo")
 public class ShortPortfolio {

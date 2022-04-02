@@ -1,6 +1,6 @@
-package monitor.icodrops;
+package monitor.dropstab;
 
-import monitor.icodrops.Telegram.MonitorBot;
+import monitor.dropstab.Telegram.MonitorBot;
 
 import java.io.IOException;
 

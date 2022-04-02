@@ -1,7 +1,7 @@
-package monitor.icodrops.Telegram;
+package monitor.dropstab.Telegram;
 
-import monitor.icodrops.Infra.AccessTokenRepository;
-import monitor.icodrops.Infra.IcoDropsRepository;
+import monitor.dropstab.Infra.AccessTokenRepository;
+import monitor.dropstab.Infra.IcoDropsRepository;
 import com.pengrad.telegrambot.Callback;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
@@ -42,7 +42,7 @@ public class MonitorBot {
                 if (text.equals("/start")) {
                     sendMessageToChat("""
                             Hello!
-                            I'm icoDrops bot.
+                            I'm dropsTab bot.
                             You can also check your drops in real time.
                             To get started, send me your account name to follow.""", chatId);
                 } else if (text.startsWith("/account")) {
@@ -70,8 +70,7 @@ public class MonitorBot {
                     sendMessageToChat("""
                             Unknown command.
                             /start - start bot
-                            /stop - stop bot
-                            0x... - set your ETH address""", chatId);
+                            /stop - stop bot""", chatId);
                 }
             }
             return UpdatesListener.CONFIRMED_UPDATES_ALL;

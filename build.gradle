@@ -6,9 +6,9 @@ plugins {
 
 }
 
-group 'monitor.icodrops'
-mainClassName = "monitor.icodrops.Main"
-version '1.0-SNAPSHOT'
+group 'monitor.dropstab'
+mainClassName = "monitor.dropstab.Main"
+version '1.0'
 
 repositories {
     mavenCentral()

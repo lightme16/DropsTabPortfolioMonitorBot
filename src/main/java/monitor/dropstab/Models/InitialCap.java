@@ -1,11 +1,11 @@
-package monitor.icodrops.Models;
+package monitor.dropstab.Models;
 
 import javax.annotation.processing.Generated;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 @Generated("jsonschema2pojo")
-public class Profit {
+public class InitialCap {
 
     @SerializedName("USD")
     @Expose
