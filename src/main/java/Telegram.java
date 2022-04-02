@@ -6,13 +6,12 @@ import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.BaseResponse;
 
 import java.io.IOException;
-import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Telegram {
 
-    private static final int PERIOD = 5000;
+    private static final int PERIOD = 1000 * 60 * 60;
     private static final double CHANGE_THRESHOLD = 0.1;
     private final TelegramBot bot;
     private final IcoDrops icoDrops;
@@ -39,9 +38,8 @@ public class Telegram {
                     sendMessageToChat("""
                             Hello!
                             I'm icoDrops bot.
-                            I can tell you how many drops you have left.
                             You can also check your drops in real time.
-                            To get started, send me your ETH address.""", chatId);
+                            To get started, send me your account name to follow.""", chatId);
                 } else if (text.startsWith("/account")) {
                     var account = text.substring(account_prefix.length()).strip();
 
@@ -55,7 +53,7 @@ public class Telegram {
                             try {
                                 var balance = getBalance(account);
                                 sendIfBalanceChanged(balance, chatId);
-                            } catch (IOException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
@@ -109,28 +107,26 @@ public class Telegram {
     }
 
     private int getBalance(String account) throws IOException {
-        ShortPortfolio shortPortfolio;
-        shortPortfolio = icoDrops.getShortPortfolio();
+        var shortPortfolio = icoDrops.getShortPortfolio();
 
         var balance = shortPortfolio.getPortfolioGroups()
                 .stream()
                 .filter(portfolioGroup -> portfolioGroup.getName().equals(account))
                 .map(portfolioGroup -> portfolioGroup.getPortfolioTotal().getTotalCap().getUsd())
                 .findFirst();
-        return parseInt(balance);
+        if (balance.isPresent()) {
+            return parseInt(balance.get());
+        } else {
+            throw new IOException("Account not found");
+        }
 
     }
 
-    private int parseInt(Optional<String> text) {
-        int default_value = 0;
-        if (text.isPresent()) {
-            try {
-                return (int) Float.parseFloat(text.get());
-            } catch (NumberFormatException e) {
-                return default_value;
-            }
-        } else {
-            return default_value;
+    private int parseInt(String text) {
+        try {
+            return (int) Float.parseFloat(text);
+        } catch (NumberFormatException e) {
+            return 0;
         }
     }
 }

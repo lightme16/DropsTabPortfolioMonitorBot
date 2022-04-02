@@ -24,7 +24,7 @@ public class IcoDrops {
     public void login() throws IOException {
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
-        RequestBody body = RequestBody.create(MessageFormat.format("'{'\"email\":\"{0}\",\"password\":\"" + password + "\"'}'", email), JSON);
+        RequestBody body = RequestBody.create(MessageFormat.format("'{'\"email\":\"{0}\",\"password\":\"{1}\"'}'", email, password), JSON);
         Request request = new Request.Builder()
                 .url(ICODROPS_COM_PORTFOLIO_LOGIN)
                 .method("POST", body)
