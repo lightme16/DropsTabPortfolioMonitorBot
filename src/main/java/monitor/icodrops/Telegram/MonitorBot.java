@@ -16,7 +16,7 @@ import java.util.TimerTask;
 public class MonitorBot {
 
     private static final int PERIOD = 1000 * 60 * 60;
-    private static final double CHANGE_THRESHOLD = 0.1;
+    private static final double CHANGE_THRESHOLD = 0.1; // 10%
     private final TelegramBot bot;
     private final IcoDropsRepository icoDrops;
     private final String targetUser;
