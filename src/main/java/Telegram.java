@@ -4,7 +4,6 @@ import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.BaseResponse;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -21,7 +20,8 @@ public class Telegram {
     private Timer timer;
     private int last_balance;
 
-    public void start() {
+    public void start() throws IOException {
+        icoDrops.login();
         bot.setUpdatesListener(updates -> {
             for (var update : updates) {
                 if (update.message() == null) {
@@ -86,12 +86,11 @@ public class Telegram {
         return Math.abs(curr_balance - last_balance) > Telegram.CHANGE_THRESHOLD * last_balance;
     }
 
-    public Telegram() throws IOException {
+    public Telegram() {
         String bot_token = System.getenv("BOT_TOKEN");
         bot = new TelegramBot(bot_token);
         icoDrops = new IcoDrops();
-        icoDrops.login();
-        targetUser = System.getenv("USER");
+        targetUser = System.getenv("TARGET_USER");
     }
 
     private void sendMessageToChat(String text, long chatId) {
@@ -122,7 +121,7 @@ public class Telegram {
 
     }
 
-    private int parseInt(@NotNull Optional<String> text) {
+    private int parseInt(Optional<String> text) {
         int default_value = 0;
         if (text.isPresent()) {
             try {
