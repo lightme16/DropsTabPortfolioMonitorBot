@@ -1,5 +1,3 @@
-import org.jetbrains.annotations.NotNull;
-
 public class ListNode {
     public int val;
     public ListNode next;
@@ -8,7 +6,7 @@ public class ListNode {
         val = x;
     }
 
-    public ListNode(int @NotNull [] nums) {
+    public ListNode(int[] nums) {
         if (nums.length == 0) {
             throw new IllegalArgumentException("nums is empty");
         }
