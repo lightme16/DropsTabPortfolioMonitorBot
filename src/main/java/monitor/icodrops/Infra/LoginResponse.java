@@ -1,4 +1,4 @@
-package monitor.icodrops.Infra.Infra;
+package monitor.icodrops.Infra;
 
 import javax.annotation.processing.Generated;
 
