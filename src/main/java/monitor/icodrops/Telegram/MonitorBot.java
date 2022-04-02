@@ -1,6 +1,7 @@
 package monitor.icodrops.Telegram;
 
-import monitor.icodrops.Infra.IcoDrops;
+import monitor.icodrops.Infra.AccessTokenRepository;
+import monitor.icodrops.Infra.IcoDropsRepository;
 import com.pengrad.telegrambot.Callback;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
@@ -12,18 +13,19 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Telegram {
+public class MonitorBot {
 
     private static final int PERIOD = 1000 * 60 * 60;
     private static final double CHANGE_THRESHOLD = 0.1;
     private final TelegramBot bot;
-    private final IcoDrops icoDrops;
+    private final IcoDropsRepository icoDrops;
     private final String targetUser;
+    private final AccessTokenRepository accessTokenRepo;
     private Timer timer;
     private int last_balance;
 
     public void start() throws IOException {
-        icoDrops.login();
+        accessTokenRepo.updateToken();
         bot.setUpdatesListener(updates -> {
             for (var update : updates) {
                 if (update.message() == null) {
@@ -84,13 +86,15 @@ public class Telegram {
     }
 
     private Boolean isChangedSignificant(int curr_balance, int last_balance) {
-        return Math.abs(curr_balance - last_balance) > Telegram.CHANGE_THRESHOLD * last_balance;
+        return Math.abs(curr_balance - last_balance) > MonitorBot.CHANGE_THRESHOLD * last_balance;
     }
 
-    public Telegram() {
-        String bot_token = System.getenv("BOT_TOKEN");
-        bot = new TelegramBot(bot_token);
-        icoDrops = new IcoDrops();
+    public MonitorBot() {
+        bot = new TelegramBot(System.getenv("BOT_TOKEN"));
+        accessTokenRepo = new AccessTokenRepository(
+                System.getenv("EMAIL"),
+                System.getenv("PASSWORD"));
+        icoDrops = new IcoDropsRepository(accessTokenRepo);
         targetUser = System.getenv("TARGET_USER");
     }
 
