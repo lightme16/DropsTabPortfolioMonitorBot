@@ -22,6 +22,10 @@ You can run application locally:
 or on remote server:
 ```
 ./gradlew shadowJar && scp build/libs/dropsTabTelegramMonitor-1.0-all.jar <your_server_ip>:~/monitor.jar
-# ssh <your_server_ip> "java -cp "*:." monitor.dropstab.Main"
+
+# ssh <your_server_ip>
+# export env variables 
+java -cp "*:." monitor.dropstab.Main
+
 ```
 
